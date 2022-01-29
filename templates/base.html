@@ -1,0 +1,60 @@
+<!DOCTYPE html> 
+{% load static %}
+<html>
+    <head>
+         <title>Technical Task</title>
+         <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Lato" />
+         <link rel="stylesheet" href="{% static 'css/base.css' %}" type="text/css">
+         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+         <script src="https://kit.fontawesome.com/46359849d7.js" crossorigin="anonymous"></script>
+         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+         <script src="{% static 'script/master.js' %}"></script>
+         <meta charset="UTF-8">
+         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+      <div class="left">
+      <div class="searchform">
+        <h2> Search Form </h2>
+        <p>search for movies,don't need to fill all input search by parameter you want.</p>
+        {% url 'movies:search'  as url %}
+        <form method="post" onsubmit="MovieSearch(event,'SearchForm','{{url}}')" id="SearchForm">
+            {% csrf_token %}
+            <div class='inputscontainer'>
+                <input type='text' name='title' placeholder="title">
+                <input type='text' name='overview' placeholder="overview">
+                <input type='text' name='popularity' placeholder="Popularity">
+                <input type='date' name='release_date' placeholder="Release Date">
+                <input type='number' name='vote_num' placeholder="Vote number">
+                <input type='number' name='vote_average' step='0.1'placeholder="Rate">
+                <input type='number' name='number' placeholder="movie ID">
+            </div>
+            <button type="submit"><i class="fas fa-search"></i> search</button>
+        </form>
+      </div>
+      <div class="searchresult">
+         
+      </div>
+      </div>
+      <div class="right">
+        <div class="parserform">
+          <h3> Parse to Json </h3>
+          <p>the supported file types : CSV, XML, XLSX. </p>
+          <form method="post" enctype="multipart/form-data" action="{% url 'movies:parse' %}">
+              {%csrf_token%}
+              <input name='file' type='file' required>
+              {% if parseerror %}
+              <div class='parseerrors'>
+                 <ul>
+                   <li>{{parseerror}}</li>
+                 </ul>
+              </div>
+              {%endif%}
+              <button type="submit"> Parse </button>
+          </form>
+        </div>
+      </div>
+      <div class="justify"></div>
+    </body>
+</html>
