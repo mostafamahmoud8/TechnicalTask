@@ -15,60 +15,63 @@ def SearchMovies(request):
     if request.method == 'POST':
 
         searchparams = request.POST
-        movies = []
+        parmas = {}
         searchresult = []
-        paramsnum = 0
-        if len(searchparams['overview']) >0:
-             paramsnum +=1
-             result = Movies.objects.filter(overview__icontains=searchparams['overview'])
-             if result.count() > 0 :
-                 for movie in result:
-                     searchresult.append(movie)
+        result = None
+
+        if searchparams['overview'] != '':
+            if result == None:
+                 result = Movies.objects.filter(overview__icontains=searchparams['overview'])
+            else:
+                 result = result.filter(overview__icontains=searchparams['overview'])
 
         if searchparams['number'] != '':
-            paramsnum +=1
-            result = Movies.objects.filter(number=searchparams['number'])
-            if result.count() > 0 :
-                for movie in result:
-                    searchresult.append(movie)
-        if len(searchparams['title']) > 0:
-            paramsnum +=1
-            result = Movies.objects.filter(title__icontains=searchparams['title'])
-            if result.count() > 0 :
-                for movie in result:
-                    searchresult.append(movie)
+            if not result:
+                 result = Movies.objects.filter(number=searchparams['number'])
+            else:
+                 result = result.filter(number=searchparams['number'])
+            
+        if searchparams['title'] != '':
+            if not result:
+                 result = Movies.objects.filter(title__icontains=searchparams['title'])
+            else:
+                 result = result.filter(title__icontains=searchparams['title'])
+
         if searchparams['popularity'] != '':
-            paramsnum +=1
-            result = Movies.objects.filter(popularity=searchparams['popularity'])
-            if result.count() > 0 :
+            if not result:
+                 result = Movies.objects.filter(popularity=searchparams['popularity'])
+            else:
+                 result = result.filter(popularity=searchparams['popularity'])
+            
+        if searchparams['release_date'] != '':
+            if result == None:
+                 result = Movies.objects.filter(release_date=searchparams['release_date'])
+            else:
+                 result = result.filter(release_date=searchparams['release_date'])
+
+        if searchparams['vote_num'] != '':
+            if not result:
+                 result = Movies.objects.filter(vote_num=searchparams['vote_num'])
+            else:
+                 result = result.filter(vote_num=searchparams['vote_num'])
+            
+        if searchparams['vote_average'] != '':
+            if not result:
+                 result = Movies.objects.filter(vote_average=searchparams['vote_average'])
+            else:
+                 result = result.filter(vote_average=searchparams['vote_average'])
+
+        if result :
+            if result.count() > 0:
                 for movie in result:
                    searchresult.append(movie)
-        if searchparams['release_date'] != '':
-            paramsnum +=1
-            result = Movies.objects.filter(release_date=searchparams['release_date'])
-            if result.count() > 0 :
-                for movie in result:
-                    searchresult.append(movie)
-    
-        if searchparams['vote_num'] != '':
-            paramsnum +=1
-            result = Movies.objects.filter(vote_num=searchparams['vote_num'])
-            if result.count() > 0 :
-                for movie in result:
-                     searchresult.append(movie)
-    
-        if searchparams['vote_average'] != '':
-            paramsnum +=1
-            result = Movies.objects.filter(vote_average=searchparams['vote_average'])
-            if result.count() > 0 :
-                for movie in result:
-                    searchresult.append(movie)
+        
+        for key,value in searchparams.items():
+            if value != '':
+                parmas[key]=value 
+        parmas.pop('csrfmiddlewaretoken')
 
-        for movie in searchresult:
-             if searchresult.count(movie) == paramsnum:
-                 if movie not in movies:
-                     movies.append(movie)
-        return render(request,'movies/search_item.html',context={'movies':movies})
+        return render(request,'movies/search_item.html',context={'movies':result,'params':parmas})
     else:
         return render(request,'base.html')
 

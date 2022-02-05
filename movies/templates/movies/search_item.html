@@ -1,4 +1,9 @@
-<h3>search result : {{movies|length}}</h3>  
+<h3>search result : {{movies|length}}</h3> 
+<h5>
+    {% for key,value in params.items %}
+      {{key}} : {{value}}, 
+    {%endfor%}
+</h5> 
 {%if movies|length > 0%}
 {% for movie in movies %}
 <div class="searchitem">
